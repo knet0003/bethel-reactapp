@@ -32,7 +32,7 @@ class App extends Component {
  
             <Route path='/createproject' exact render={(props) => <CreateProject  {...props}/>} />
           </Routes> */}
-          <Sidebar/>
+          { user ? < Sidebar/> : <LoginForm />}
           {/* {!user &&
           <LoginForm />
           } */}
