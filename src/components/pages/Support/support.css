@@ -1,0 +1,37 @@
+.title {
+  text-align: center;
+  padding: 20px;
+}
+
+.contain {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.supportCard {
+  padding: 40px;
+  text-align: center;
+  background: #faf7fc;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 2px 1px rgba(0, 0, 0, 0.12),
+    0px 1px 1px rgba(0, 0, 0, 0.14);
+  cursor: pointer;
+}
+
+.supportCard:hover {
+  background: #df9180;
+}
+
+.icon {
+  transform: scale(2);
+  margin: 20px;
+}
+
+p {
+  max-width: 200px;
+}
+
+.button-primary {
+  margin: 20px auto;
+  text-align: center;
+  display: block;
+}

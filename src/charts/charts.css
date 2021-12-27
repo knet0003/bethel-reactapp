@@ -1,0 +1,38 @@
+.chartTop {
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-outlined {
+  border: 1px solid #df9180;
+  box-sizing: border-box;
+  border-radius: 4px;
+  color: #df9180;
+  background: #fff;
+  font-weight: 600;
+}
+
+.button-primary {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  background: #c02302;
+  border: none;
+  border-radius: 4px;
+  height: 36px;
+  width: 132px;
+  left: 894px;
+  top: 53px;
+  border-radius: 4px;
+  padding: 8px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.dropdown-basic-button {
+  flex-direction: column;
+}
+

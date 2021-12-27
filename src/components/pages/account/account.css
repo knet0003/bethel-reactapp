@@ -1,0 +1,11 @@
+.column {
+  flex: 1;
+}
+
+.avatar {
+  display: block;
+  margin: 20px auto;
+  width: 20%;
+  height: auto;
+  border-radius: 50%;
+}
