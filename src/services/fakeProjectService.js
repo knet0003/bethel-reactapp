@@ -1,31 +1,31 @@
 const projects = [
   {
-    _id: "5b21ca3eeb7f6fbccd471815",
+    project_id: "5b21ca3eeb7f6fbccd471815",
     name: "Dixons",
-    environment: "Env1",
-    nodeCount: 6,
-    owner: "Sarah",
-    createDate: "2018-01-03T19:04:28.809Z",
+    provider: "azure",
+    nodes_count: 6,
+    owner_id: "Sarah",
+    created_at: "2018-01-03T19:04:28.809Z",
     deployed: true,
     switch: true
   },
   {
-    _id: "5b21ca3eeb7f6fbccd471816",
+    project_id: "5b21ca3eeb7f6fbccd471816",
     name: "Motels",
-    environment: "Env2",
-    nodeCount: 5,
-    owner: "Anna",
-    createDate: "2018-01-03T19:04:28.809Z",
+    provider: "do",
+    nodes_count: 5,
+    owner_id: "Anna",
+    created_at: "2018-01-03T19:04:28.809Z",
     deployed: true,
     switch: true
   },
   {
-    _id: "5b21ca3eeb7f6fbccd471817",
+    project_id: "5b21ca3eeb7f6fbccd471817",
     name: "ZipCar",
-    environment: "Env3",
-    nodeCount: 8,
-    owner: "Brody",
-    createDate: "2018-01-03T19:04:28.809Z",
+    provider: "azure",
+    nodes_count: 8,
+    owner_id: "Brody",
+    created_at: "2018-01-03T19:04:28.809Z",
     deployed:false,
     switch: false
   }
@@ -62,7 +62,7 @@ export function saveProject(project) {
 }
 
 export function deleteProject(id) {
-  let projectInDb = projects.find(m => m._id === id);
+  let projectInDb = projects.find(m => m.project_id === id);
  projects.splice(projects.indexOf(projectInDb), 1);
   return projectInDb;
 }

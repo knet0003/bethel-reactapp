@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Joi from "joi-browser";
 import Select from "./select";
+import Input from "./input";
 import { FloatingLabel } from "react-bootstrap";
 import { Form as Reactform } from "react-bootstrap";
 
@@ -69,22 +70,29 @@ class Form extends Component {
     );
   }
 
-  renderInput(name, label, height, type = "text") {
+  renderInput(name, label, type = "text") {
     const { data, errors } = this.state;
 
     return (
-      <FloatingLabel controlId="floatingTextarea2" label={label}>
-        <Reactform.Control
-          as="textarea"
-          placeholder={name}
-          style={{ height: `${height}` }}
-          type={type}
-          name={name}
-          value={data[name]}
-          onChange={this.handleChange}
-          error={errors[name]}
-        />
-      </FloatingLabel>
+      <Input
+        type={type}
+        name={name}
+        value={data[name]}
+        label={label}
+        onChange={this.handleChange}
+        error={errors[name]}
+      />
+      //   <FloatingLabel controlId="floatingTextarea2" label={label}>
+      //     <Reactform.Control
+      //       as="textarea"
+      //       placeholder={name}
+      //       type={type}
+      //       name={name}
+      //       value={data[name]}
+      //       onChange={this.handleChange}
+      //       error={errors[name]}
+      //     />
+      //   </FloatingLabel>
     );
   }
 }

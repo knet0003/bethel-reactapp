@@ -1,27 +1,38 @@
 import React, { Component} from "react";
 import "./App.css";
 import Sidebar from "./components/sideBar/sideNavBar";
-import LoginForm from './components/loginForm';
+import LoginForm from './components/pages/authentication/loginForm';
 import auth from "./services/authService";
 import TopBar from "./components/topBar/topBar";
+import RegisterForm from "./components/pages/authentication/registerForm";
+import Authentication from './components/pages/authentication/authentication';
 
 class App extends Component {
   state = {
     token: "",
-    user: {}
+    user: {},
+    reg: ""
   }; 
 
   componentDidMount() {
-    const user = auth.getCurrentUser();
-    this.setState({ user });
+    // const user = auth.getCurrentUser();
+    // this.setState({ user });
+    const token = auth.getJwt();
+    this.setState({ token })
   }
- 
-  render() {
 
-  // if(!this.token) {
-  //   return <LoginForm setToken={this.state.token} />
-  // }
-  const { user } = this.state;
+ handleToken = (tok) => {
+   const { token } = this.state;
+   this.setState({ token: tok});
+   console.log(token);
+ }
+
+  render() {
+  const  { user, token } = this.state
+  if(!token) {
+    return <Authentication token={this.handleToken}/>
+   
+  }
     return (
       <>
           {/* <Routes history={history}>
@@ -32,11 +43,7 @@ class App extends Component {
  
             <Route path='/createproject' exact render={(props) => <CreateProject  {...props}/>} />
           </Routes> */}
-          { user ? < Sidebar/> : <LoginForm />}
-          {/* {!user &&
-          <LoginForm />
-          } */}
-    
+        <Sidebar />           
           
       </>
       

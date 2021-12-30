@@ -2,52 +2,113 @@ import React from "react";
 import "./projects.css";
 import ProjectTable from "./projectsTable";
 import NodeTable from "./nodeTable";
-import { getNodes } from "../../../services/fakeNodeService";
+import { getNodes, sendDeleteNode } from "../../../services/nodeService";
 import "../../../charts/charts.css";
-import Dropdown from "@restart/ui/esm/Dropdown";
-import { DropdownButton } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { toast } from "react-toastify";
+import { Modal, Button } from "react-bootstrap";
+import {
+  deleteProject,
+  sendDeleteProject,
+  getProjects,
+} from "./../../../services/projectService";
 
 class Projects extends React.Component {
-  state = {
-    projects: [],
-    nodes: [],
-  };
+  constructor() {
+    super();
+    this.state = {
+      projects: [],
+      nodes: [],
+      isShown: false,
+      selectedProject: {},
+      selectedNode: {},
+    };
+
+    this.onInputchange = this.onInputchange.bind(this);
+  }
 
   async componentDidMount() {
-    const access_token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDA3NDkzODcsImlzcyI6IjYxYjk3YWQzNDMxN2FiMDM0MmFiOTQ1ZCJ9.Q7kwxYE2-UWf6MsGumdHGFL1ZNzuEQH94-Oz3EGv6Qs";
-    axios
-      .get(
-        "http://20.211.122.248:8000/api/v1/project/61b97ad34317ab0342ab945d",
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res);
-        // this.setState({ projects: res.data });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    // const authAxios = axios.create({
-    //   baseURL:
-    //     "http://20.211.122.248:8000/api/v1/project/61b97ad34317ab0342ab945d",
-    //   headers: {
-    //     Authorization:
-    //       "Bearer" +
-    //       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mzk3MTg1NTUsImlzcyI6IjYxYjk3YWQzNDMxN2FiMDM0MmFiOTQ1ZCJ9.rPfKPpu0tulahhDw4J2nFmjGLYV7q9lVHlVdhQKlU1Q",
-    //   },
-    // });
-    // const { data } = await getProjects();
-    // this.setState({ projects: data });
-    // this.setState({ projects: getProjects() });
-    this.setState({ nodes: getNodes() });
+    const projResponse = await getProjects();
+    const { data: projData } = projResponse;
+    const { projects } = projData;
+
+    projects ? this.setState({ projects }) : this.setState({ projects: [] });
+    const nodeResponse = await getNodes();
+    const { data: nodeData } = nodeResponse;
+    const { droplets } = nodeData;
+    droplets
+      ? this.setState({ nodes: droplets })
+      : this.setState({ nodes: [] });
   }
+
+  handleDelete = (toDelete) => {
+    if (
+      this.state.projects.some(
+        (project) => project.project_name === Object.values(toDelete)[0]
+      )
+    ) {
+      this.setState({ selectedProject: toDelete });
+      if (this.sendDelete(toDelete, "project") === true) {
+        const originalProjects = this.state.projects;
+        const projects = originalProjects.filter(
+          (p) => p.project_id !== toDelete.project_id
+        );
+        this.setState({ projects });
+      }
+      console.log(Object.values(toDelete)[0]);
+    } else if (
+      this.state.nodes.some((node) => node.vm_id === Object.values(toDelete)[0])
+    ) {
+      if (this.sendDelete(toDelete, "node") === true) {
+        const originalNodes = this.state.nodes;
+        const nodes = originalNodes.filter((p) => p.vm_id !== toDelete.vm_id);
+        this.setState({ nodes });
+      }
+    }
+  };
+
+  handleClose = async () => this.setState({ isShown: false });
+
+  sendDelete = async (deleteItem, type) => {
+    try {
+      console.log(type);
+      if (type === "project") {
+        await sendDeleteProject(deleteItem.project_id);
+        this.setState({ isShown: true });
+      }
+      this.setState({ isShown: true });
+      if (type === "node") {
+        const projectId = this.state.projects.find(
+          (p) => p.project_id === deleteItem.resource_group
+        ).project_id;
+        await sendDeleteNode(deleteItem.vm_id, projectId);
+        this.setState({ isShown: true });
+      }
+      return true;
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        toast.error("This movie has already been deleted.");
+    }
+  };
+
+  onInputchange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  confirmDelete = async () => {
+    try {
+      await deleteProject(
+        this.state.selectedProject.project_id,
+        this.state.confirmation_number
+      );
+      this.handleClose();
+      window.location.reload(false);
+    } catch (ex) {
+      console.error(ex);
+    }
+  };
 
   render() {
     return (
@@ -60,43 +121,54 @@ class Projects extends React.Component {
                 Create new
               </Link>
             </div>
-            <ProjectTable projects={this.state.projects} />
+            {this.state.projects ? (
+              <ProjectTable
+                projects={this.state.projects}
+                onDelete={this.handleDelete}
+              />
+            ) : null}
           </div>
         </div>
+        <Modal
+          show={this.state.isShown}
+          onHide={this.handleClose}
+          backdrop="static"
+          keyboard={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Deletion</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Deletion code has been sent to your email and phone. Please, confirm
+            below
+            <br />
+            <input
+              type="text"
+              name="confirmation_number"
+              id="confirmation_number"
+              value={this.state.confirm}
+              onChange={this.onInputchange}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={this.handleClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={this.confirmDelete}>
+              Submit
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         <div className="cards">
           <div className="cardContainer">
             <div className="chartTop">
               <h2 className="chartTitle">Deployed Nodes</h2>
-              <Link to="/createnode" className="button-outlined">
+              <Link to="/nodes/new" className="button-outlined">
                 Create new
               </Link>
             </div>
-            <NodeTable nodes={this.state.nodes} />
-          </div>
-        </div>
-        <div className="cards">
-          <div className="cardContainer">
-            <div className="chartTop">
-              <h2>Add Nodes</h2>
-            </div>
-            <div className="chartTop">
-              <DropdownButton title="Select node" className="drop">
-                {this.state.nodes.map((node, index) => {
-                  return <Dropdown.Item key={index}>{node.name}</Dropdown.Item>;
-                })}
-              </DropdownButton>
-              <DropdownButton
-                id="dropdown-variants-Secondary"
-                title="Select project"
-              >
-                {this.state.projects.map((project, index) => {
-                  return (
-                    <Dropdown.Item key={index}>{project.name}</Dropdown.Item>
-                  );
-                })}
-              </DropdownButton>
-              <button className="button-primary">Deploy</button>
-            </div>
+            <NodeTable nodes={this.state.nodes} onDelete={this.handleDelete} />
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import Joi from "joi-browser";
 import React from "react";
 import { saveProject } from "../../../services/projectService";
+
 import Form from "../../common/form";
 import "../projects/projects.css";
 import { getProject } from "./../../../services/projectService";
@@ -9,24 +10,25 @@ class CreateProject extends Form {
   state = {
     data: {
       name: "",
-      description: "",
-      environment: "",
-      purpose: "",
+      provider: "",
     },
+    providers: [
+      { label: "Azure", value: "azure" },
+      { label: "Digital Ocean", value: "digitalocean" },
+    ],
     errors: {},
   };
 
   schema = {
     _id: Joi.string(),
     name: Joi.string().required().label("Name"),
-    description: Joi.string().required().label("Description"),
-    environment: Joi.string().required().label("Environment"),
-    purpose: Joi.string().required().label("Purpose"),
+    provider: Joi.string().required().label("Provider"),
   };
 
   async populateProject() {
     try {
       const projectId = window.location.href.split("/").pop();
+      if (!projectId) return;
       if (projectId === "new") return;
       const { data: project } = await getProject(projectId);
       this.setState({ data: this.mapToViewModel(project) });
@@ -51,25 +53,20 @@ class CreateProject extends Form {
     return {
       _id: project._id,
       name: project.name,
-      description: project.description,
-      environment: project.environment,
-      purpose: project.purpose,
+      provider: project.provider,
     };
   }
 
   render() {
+    console.log(this.state.data);
     return (
       <form onSubmit={this.handleSubmit}>
         <div className="cardContainer">
           <h3 className="title"> Create Project </h3>
           {this.renderInput("name", "Project name", "60px")}
           <br />
-          {this.renderInput("description", "Project Description", "120px")}
-          <br />
-          {this.renderInput("environment", "Project Environment", "60px")}
-          <br />
-          {this.renderInput("purpose", "Project Purpose", "120px")}
-          <br />
+          {this.renderSelect("provider", "Provider", this.state.providers)}
+
           {this.renderButton("Save")}
         </div>
       </form>

@@ -9,10 +9,20 @@ class NodeTable extends Component {
       label: "Name",
       content: (node) => <Link to={`/nodes/${node._id}`}>{node.name}</Link>,
     },
-    { path: "projectName", label: "Project Name" },
-    { path: "image", label: "Image" },
-    { path: "volume", label: "Volume" },
-    { path: "createDate", label: "Created" },
+    { path: "ip", label: "IP" },
+    { path: "resource_group", label: "Project Name" },
+    { path: "created", label: "Created" },
+    {
+      key: "delete",
+      content: (node) => (
+        <button
+          onClick={() => this.props.onDelete(node)}
+          className="btn btn-danger btn-sm"
+        >
+          Delete
+        </button>
+      ),
+    },
   ];
 
   render() {

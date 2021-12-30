@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import "./topBar.css";
 import profile from "../../profile.png";
 import logo from "../../bethelblock.png";
 import { Link } from "react-router-dom";
+import authService from "../../services/authService";
 
 function TopBar() {
+  const [name, setName] = useState(0);
+  setName(authService)
   return (
     <div className="topBar">
       <div className="topBarWrapper">

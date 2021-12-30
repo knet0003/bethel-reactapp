@@ -1,14 +1,25 @@
 import http from "./httpService";
 import { apiUrl } from "../config.json";
 
-const apiEndpoint = apiUrl + "/nodes";
+
+const apiEndpoint = apiUrl + "api/v1/node";
+const access_token = localStorage.getItem("token");
+const id = localStorage.getItem("id");
+const headers = {'Authorization': `Bearer ${access_token}`,
+'Content-Type': 'application/json'};
+const header2 = {'Authorization': `Bearer ${access_token}`};
 
 function nodeUrl(id) {
   return `${apiEndpoint}/${id}`;
 }
 
 export function getNodes() {
-  return http.get(apiEndpoint);
+  return http.get(
+    apiUrl+"api/v1/azurenodes/"+id,
+    {
+      headers: headers
+    }
+  );
 }
 
 export function getNode(nodeId) {
@@ -16,13 +27,13 @@ export function getNode(nodeId) {
 }
 
 export function saveNode(node) {
-  if (node._id) {
-    const body = { ...node };
-    delete body._id;
-    return http.put(nodeUrl(node._id), body);
-  }
+  const body = { ...node };
+    return http.post(apiEndpoint+"/"+id, body, {headers: headers});
+}
 
-  return http.post(apiEndpoint, node);
+
+export function sendDeleteNode(nodeId, projectId) {
+  return http.post(apiEndpoint+`/delete/confirmcode/${projectId}/${nodeId}/${id}`,"",{headers: header2});
 }
 
 export function deleteNode(nodeId) {

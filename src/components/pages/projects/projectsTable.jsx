@@ -11,21 +11,27 @@ class ProjectTable extends Component {
         <Link to={`/projects/${project._id}`}>{project.name}</Link>
       ),
     },
-    { path: "environment", label: "Environment" },
-    { path: "nodeCount", label: "Node Count" },
-    { path: "owner", label: "Owner" },
-    { path: "createDate", label: "Created" },
+    { path: "provider", label: "Provider" },
+    { path: "nodes_count", label: "Node Count" },
+    { path: "user_id", label: "Owner" },
+    { path: "created_at", label: "Created" },
+    {
+      key: "delete",
+      content: (project) => (
+        <button
+          onClick={() => this.props.onDelete(project)}
+          className="btn btn-danger btn-sm"
+        >
+          Delete
+        </button>
+      ),
+    },
   ];
 
   render() {
     const { projects } = this.props;
 
-    return (
-      <Table
-        columns={this.columns}
-        data={projects}
-      />
-    );
+    return <Table columns={this.columns} data={projects} />;
   }
 }
 
