@@ -2,7 +2,11 @@ import React from "react";
 import "./projects.css";
 import ProjectTable from "./projectsTable";
 import NodeTable from "./nodeTable";
-import { getNodes, sendDeleteNode } from "../../../services/nodeService";
+import {
+  deleteNode,
+  getNodes,
+  sendDeleteNode,
+} from "../../../services/nodeService";
 import "../../../charts/charts.css";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -20,8 +24,8 @@ class Projects extends React.Component {
       projects: [],
       nodes: [],
       isShown: false,
-      selectedProject: {},
-      selectedNode: {},
+      toBeDeleted: {},
+      selected: "",
     };
 
     this.onInputchange = this.onInputchange.bind(this);
@@ -42,12 +46,10 @@ class Projects extends React.Component {
   }
 
   handleDelete = (toDelete) => {
-    if (
-      this.state.projects.some(
-        (project) => project.project_name === Object.values(toDelete)[0]
-      )
-    ) {
-      this.setState({ selectedProject: toDelete });
+    console.log(toDelete);
+    if (toDelete.hasOwnProperty("project_id")) {
+      this.setState({ selected: "project", toBeDeleted: toDelete });
+      console.log(this.state.selectedProject);
       if (this.sendDelete(toDelete, "project") === true) {
         const originalProjects = this.state.projects;
         const projects = originalProjects.filter(
@@ -55,10 +57,8 @@ class Projects extends React.Component {
         );
         this.setState({ projects });
       }
-      console.log(Object.values(toDelete)[0]);
-    } else if (
-      this.state.nodes.some((node) => node.vm_id === Object.values(toDelete)[0])
-    ) {
+    } else if (toDelete.hasOwnProperty("vm_id")) {
+      this.setState({ selected: "node", toBeDeleted: toDelete });
       if (this.sendDelete(toDelete, "node") === true) {
         const originalNodes = this.state.nodes;
         const nodes = originalNodes.filter((p) => p.vm_id !== toDelete.vm_id);
@@ -69,8 +69,9 @@ class Projects extends React.Component {
 
   handleClose = async () => this.setState({ isShown: false });
 
-  sendDelete = async (deleteItem, type) => {
+  sendDelete = async (deleteItem) => {
     try {
+      const type = this.state.selected;
       console.log(type);
       if (type === "project") {
         await sendDeleteProject(deleteItem.project_id);
@@ -79,8 +80,9 @@ class Projects extends React.Component {
       this.setState({ isShown: true });
       if (type === "node") {
         const projectId = this.state.projects.find(
-          (p) => p.project_id === deleteItem.resource_group
+          (p) => p.name === deleteItem.resource_group
         ).project_id;
+        console.log(projectId);
         await sendDeleteNode(deleteItem.vm_id, projectId);
         this.setState({ isShown: true });
       }
@@ -98,11 +100,21 @@ class Projects extends React.Component {
   };
 
   confirmDelete = async () => {
+    console.log(this.state.selected);
+    const {
+      toBeDeleted: toDelete,
+      selected: type,
+      confirmation_number,
+    } = this.state;
     try {
-      await deleteProject(
-        this.state.selectedProject.project_id,
-        this.state.confirmation_number
-      );
+      if (type === "project")
+        await deleteProject(toDelete.project_id, confirmation_number);
+      if (type === "node") {
+        const projectId = this.state.projects.find(
+          (p) => p.name === toDelete.resource_group
+        ).project_id;
+        await deleteNode(projectId, toDelete.vm_id, confirmation_number);
+      }
       this.handleClose();
       window.location.reload(false);
     } catch (ex) {

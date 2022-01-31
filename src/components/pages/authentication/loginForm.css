@@ -1,4 +1,4 @@
-.box {
+.loginbox {
   display: flex;
   height: 100vh;
   flex-direction: row;
@@ -18,8 +18,8 @@
   background-color: rgba(255, 255, 255, 0.596);
 } */
 
-.cardContainer {
-  min-width: 50vw;
+.logincardContainer {
+  min-width: 300px;
   width: 25vw;
   height: fit-content;
   flex: 1;
@@ -29,4 +29,13 @@
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 2px 1px rgba(0, 0, 0, 0.12),
     0px 1px 1px rgba(0, 0, 0, 0.14);
   border-radius: 4px;
+}
+
+.column {
+  width: 20%;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 100px auto;
 }

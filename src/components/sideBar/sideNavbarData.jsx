@@ -8,7 +8,9 @@ import {
   AutoAwesomeMotion,
   Assessment,
   SupportAgent,
+  Backup,
 } from "@mui/icons-material";
+import Deployment from "../pages/deployment/deployment";
 
 export const routes = [
   {
@@ -34,6 +36,14 @@ export const routes = [
     main: () => <Status />,
     cName: "nav-text",
     icon: <Assessment />,
+  },
+  {
+    title: "Deployment",
+    path: "/deployment",
+    sidebar: () => <div>deploy!</div>,
+    main: () => <Deployment />,
+    cName: "nav-text",
+    icon: <Backup />,
   },
   {
     title: "Support",

@@ -47,9 +47,9 @@ class Form extends Component {
     this.setState({ data, errors });
   };
 
-  renderButton(label) {
+  renderButton(label, classi = "btn btn-primary") {
     return (
-      <button disabled={this.validate()} className="btn btn-primary">
+      <button disabled={this.validate()} class={classi}>
         {label}
       </button>
     );

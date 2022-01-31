@@ -1,90 +1,119 @@
-import React from "react";
+import React, { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import { routes } from "./sideNavbarData";
 import "./sideBar.css";
 import CreateProject from "./../pages/projects/createProject";
 import CreateNode from "./../pages/projects/createNode";
-import LoginForm from "../pages/authentication/loginForm";
-// import Logout from "../log";
 import Account from "../pages/account/account";
+import Deployment from "../pages/deployment/deployment";
 import "../topBar/topBar.css";
 import profile from "../../profile.png";
 import logo from "../../bethelblock.png";
-import authService from "../../services/authService";
+import authService, {
+  getProfile,
+  getProfPicture,
+} from "../../services/authService";
 import RegisterForm from "../pages/authentication/registerForm";
+import TopBar from "../topBar/topBar";
 
-export default function Sidebar() {
-  const logout = () => {
+class Sidebar extends React.Component {
+  state = {
+    image: "",
+    name: "",
+  };
+
+  logout = () => {
     authService.logout();
     window.location.reload(false);
   };
 
-  return (
-    <div>
-      <div className="topBar">
-        <div className="topBarWrapper">
-          <div className="topLeft">
-            <Link to="/account">
-              <span className="logo">
-                {" "}
-                <img src={logo} alt="logo" className="logo" />
-              </span>
-            </Link>
-          </div>
-          <div className="topRight">
-            <div className="topBarIconContainer">
-              <button onClick={logout}>logout</button>
-              <span>{localStorage.getItem("name")}</span>
+  async componentDidMount() {
+    const { data } = await getProfile();
+    console.log(data);
+    const { first_name, last_name } = data;
+    this.setState({ name: first_name + " " + last_name });
+    console.log(this.state.name);
+    const { data: data2 } = await getProfPicture();
+    const { image_stream } = data2;
+    this.setState({ image: image_stream });
+  }
+
+  render() {
+    return (
+      <div>
+        <div className="topBar">
+          <div className="topBarWrapper">
+            <div className="topLeft">
               <Link to="/account">
-                <img src={profile} alt="avatar" className="topAvatar" />
+                <span className="logo">
+                  {" "}
+                  <img src={logo} alt="logo" className="logo" />
+                </span>
               </Link>
             </div>
-          </div>
-        </div>
-      </div>
-      {/* <TopBar /> */}
-      <div className="page">
-        <div className="sidebar">
-          <div className="sidebarWrapper">
-            <div className="sidebarMenu">
-              <ul className="sidebarList">
-                {routes.map((item, index) => {
-                  return (
-                    <li key={index} className={item.cName}>
-                      {" "}
-                      <Link to={item.path}>
-                        {item.icon}
-                        <span>{item.title}</span>
-                      </Link>{" "}
-                    </li>
-                  );
-                })}
-              </ul>
-              <Routes>
-                {routes.map((route, index) => (
-                  <Route
-                    key={index}
-                    path={route.path}
-                    element={<route.sidebar />}
+            <div className="topRight">
+              <button className="btn btn-primary" onClick={this.logout}>
+                logout
+              </button>
+              <p>{this.state.name}</p>
+              <div className="topBarIconContainer">
+                <Link to="/account">
+                  <img
+                    src={`data: image/png;base64,${this.state.image}`}
+                    alt="avatar"
+                    className="topAvatar"
                   />
-                ))}
-              </Routes>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
+        {/* <TopBar /> */}
+        <div className="page">
+          <div className="sidebar">
+            <div className="sidebarWrapper">
+              <div className="sidebarMenu">
+                <ul className="sidebarList">
+                  {routes.map((item, index) => {
+                    return (
+                      <li key={index} className={item.cName}>
+                        {" "}
+                        <Link to={item.path}>
+                          {item.icon}
+                          <span>{item.title}</span>
+                        </Link>{" "}
+                      </li>
+                    );
+                  })}
+                </ul>
+                <Routes>
+                  {routes.map((route, index) => (
+                    <Route
+                      key={index}
+                      path={route.path}
+                      element={<route.sidebar />}
+                    />
+                  ))}
+                </Routes>
+              </div>
+            </div>
+          </div>
 
-        <div className="contentpage">
-          <Routes>
-            <Route path="/register" component={RegisterForm} />
-            {routes.map((route, index) => (
-              <Route key={index} path={route.path} element={<route.main />} />
-            ))}
-            <Route path="/projects/:id" element={<CreateProject />} />
-            <Route path="/nodes/:id" element={<CreateNode />} />
-            <Route path="/account" element={<Account />} />
-          </Routes>
+          <div className="contentpage">
+            <Routes>
+              <Route path="/register" component={RegisterForm} />
+              {routes.map((route, index) => (
+                <Route key={index} path={route.path} element={<route.main />} />
+              ))}
+              <Route path="/projects/:id" element={<CreateProject />} />
+              <Route path="/nodes/:id" element={<CreateNode />} />
+              <Route path="/account" element={<Account />} />
+            </Routes>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
+
+export default Sidebar;

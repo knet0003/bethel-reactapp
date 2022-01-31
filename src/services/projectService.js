@@ -40,3 +40,7 @@ export function sendDeleteProject(projectId) {
 export function deleteProject(projectId, otp) {
   return http.delete(apiEndpoint+`/${projectId}/${id}/${otp}`, {headers: headers})
 }
+
+export function getDeployedProjects() {
+  return http.get(apiUrl + `api/v1/deployed/project/${id}`, {headers: headers})
+}

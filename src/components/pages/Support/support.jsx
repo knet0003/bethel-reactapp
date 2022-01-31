@@ -1,4 +1,5 @@
 import React from "react";
+import Crouton from "react-crouton";
 import "./support.css";
 import "../projects/projects.css";
 import {
@@ -6,10 +7,28 @@ import {
   Dns,
   IntegrationInstructions,
   ShoppingBasket,
+  ReportTwoTone,
 } from "@mui/icons-material";
 import { FloatingLabel, Form } from "react-bootstrap";
+import { submitTicket } from "../../../services/authService";
 
 class Support extends React.Component {
+  state = {
+    issue: "",
+  };
+
+  handleChange = (event) => {
+    this.setState({ issue: event.target.value });
+  };
+
+  handleSubmit = async () => {
+    const submission = await submitTicket(this.state);
+    console.log(submission);
+    const { data } = submission;
+    const { message } = data;
+    console.log(message);
+  };
+
   render() {
     return (
       <div className="support">
@@ -50,9 +69,13 @@ class Support extends React.Component {
               as="textarea"
               placeholder="Leave a comment here"
               style={{ height: "100px" }}
+              value={this.state.issue}
+              onChange={this.handleChange}
             />
           </FloatingLabel>
-          <button className="button-primary">Submit</button>
+          <button className="button-primary" onClick={this.handleSubmit}>
+            Submit
+          </button>
         </div>
       </div>
     );

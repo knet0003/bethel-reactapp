@@ -33,9 +33,11 @@ export function saveNode(node) {
 
 
 export function sendDeleteNode(nodeId, projectId) {
-  return http.post(apiEndpoint+`/delete/confirmcode/${projectId}/${nodeId}/${id}`,"",{headers: header2});
+  const idi = localStorage.getItem("id");
+  return http.post(apiEndpoint+`/delete/confirmcode/${projectId}/${nodeId}/${idi}`,"",{headers: header2});
 }
 
-export function deleteNode(nodeId) {
-  return http.delete(nodeUrl(nodeId));
+export function deleteNode(projectId, nodeId, otp) {
+  const idi = localStorage.getItem("id");
+  return http.delete(apiEndpoint+`/${projectId}/${nodeId}/${idi}/${otp}`, {headers: headers})
 }

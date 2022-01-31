@@ -4,10 +4,14 @@ import profile from "../../profile.png";
 import logo from "../../bethelblock.png";
 import { Link } from "react-router-dom";
 import authService from "../../services/authService";
+import { getProfPicture } from "./../../services/authService";
 
 function TopBar() {
-  const [name, setName] = useState(0);
-  setName(authService)
+  const [name, setName, picture, setPicture] = useState(0);
+  setName(authService);
+  const { data } = getProfPicture();
+  const { image_stream } = data;
+  setPicture(image_stream);
   return (
     <div className="topBar">
       <div className="topBarWrapper">
@@ -24,7 +28,11 @@ function TopBar() {
             <span>John Snow</span>
 
             <Link to="/account">
-              <img src={profile} alt="avatar" className="topAvatar" />
+              <img
+                src={`data: image/png;base64,${picture}`}
+                alt="avatar"
+                className="avatar"
+              />
             </Link>
           </div>
         </div>

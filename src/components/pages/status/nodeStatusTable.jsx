@@ -2,10 +2,9 @@ import { Switch } from "@mui/material";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../common/table";
-import ExpandTable from "./expandTable";
 import "./status.css";
 
-class StatusTable extends Component {
+class NodeStatusTable extends Component {
   columns = [
     {
       path: "name",
@@ -22,11 +21,7 @@ class StatusTable extends Component {
       label: "Deployed",
       content: (project) => (project.network_deployed ? "Yes" : "No"),
     },
-    {
-      path: "nodes",
-      label: "Nodes",
-      content: (project) => <ExpandTable nodes={project.nodes}></ExpandTable>,
-    },
+    // { path: "nodes", label: "Nodes" },
     {
       key: "status",
       content: (project) => (
@@ -47,4 +42,4 @@ class StatusTable extends Component {
   }
 }
 
-export default StatusTable;
+export default NodeStatusTable;

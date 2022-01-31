@@ -4,12 +4,14 @@
   flex-direction: row;
   justify-content: space-evenly;
   align-items: stretch;
-  min-height: 200px;
+  min-height: 325px;
+  max-height: 570px;
 }
 
 .cardContainer {
   flex: 1;
   background: #fff;
+  margin: 20px;
   padding: 20px;
   /* 01 dp */
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 2px 1px rgba(0, 0, 0, 0.12),
@@ -20,4 +22,3 @@
 .drop {
   background: lavender;
 }
-

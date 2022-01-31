@@ -40,7 +40,7 @@ class CreateProject extends Form {
 
   doSubmit = async () => {
     await saveProject(this.state.data);
-    console.log("save");
+    console.log("saved");
     this.props.history.push("/projects");
   };
 

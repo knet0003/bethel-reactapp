@@ -33,17 +33,19 @@ class LoginForm extends Form {
 
   render() {
     return (
-      <div className="box">
+      <div className="loginbox">
         <form onSubmit={this.handleSubmit}>
-          <div className="cardContainer">
+          <div className="logincardContainer">
             <img src={logo} alt="logo" className="logo" />
             <h3>Login</h3>
             <br />
             {this.renderInput("email", "Email")}
             <br />
             {this.renderInput("password", "Password", "password")}
-            <br />
-            {this.renderButton("Login")}
+            <br />{" "}
+            <div className="d-grid">
+              {this.renderButton("Login", "btn btn-primary btn-block")}
+            </div>
             <br />
             New to out platform?
             <Button variant="link" onClick={() => this.props.onSignup()}>

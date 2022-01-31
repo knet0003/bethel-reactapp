@@ -1,7 +1,12 @@
 import React from "react";
 import "./account.css";
 import profile from "../../../profile.png";
-import { getProfile, saveProfile } from "../../../services/authService";
+import {
+  getProfile,
+  savePicture,
+  saveProfile,
+} from "../../../services/authService";
+import { getProfPicture } from "../../../services/authService";
 import Joi from "joi-browser";
 import Form from "../../common/form";
 import countryList from "react-select-country-list";
@@ -15,7 +20,11 @@ class Account extends Form {
       email: "",
       country: "",
       country_code: "",
+      mobile_verified: "",
     },
+    profile_picture: "",
+    selectedFile: "",
+    isFilePicked: false,
     errors: {},
   };
 
@@ -31,7 +40,9 @@ class Account extends Form {
 
   async componentDidMount() {
     await this.populateProfile();
-    console.log("mounted");
+    const { data } = await getProfPicture();
+    const { image_stream } = data;
+    this.setState({ profile_picture: image_stream });
   }
 
   async populateProfile() {
@@ -54,19 +65,60 @@ class Account extends Form {
       fname: profile.first_name,
       lname: profile.last_name,
       phone: profile.phone,
+      email: profile.email,
       country: profile.country,
       country_code: profile.country_code,
+      mobile_verified: profile.mobile_verified,
     };
   }
+  changeHandler = (event) => {
+    const file = event.target.files[0];
+    this.setState({ selectedFile: file });
+    this.setState({ isSelected: true });
+  };
+
+  handleSubmission = async () => {
+    console.log(this.state.selectedFile);
+    await savePicture(this.state.selectedFile);
+    window.location.reload(false);
+  };
 
   render() {
     const options = countryList().getData();
+    const { selectedFile, isSelected } = this.state;
+    console.log(this.state.data.mobile_verified);
     return (
-      <form onSubmit={this.handleSubmit}>
-        <div className="cardContainer">
-          <h3 className="title"> Profile </h3>
-
+      <div className="cardContainer">
+        <h3 className="title"> Profile </h3>
+        {this.state.profile_picture !== "" ? (
+          <img
+            src={`data: image/png;base64,${this.state.profile_picture}`}
+            alt="avatar"
+            className="avatar"
+          />
+        ) : (
           <img src={profile} alt="avatar" className="avatar" />
+        )}
+        <input type="file" name="file" onChange={this.changeHandler} />
+        {isSelected ? (
+          <div>
+            <p>Allowed JPG, GIF or PNG. Max size of 800kB</p>
+            <p>Filename: {selectedFile.name}</p>
+            <p>Filetype: {selectedFile.type}</p>
+            <p>Size in bytes: {selectedFile.size}</p>
+            <p>
+              lastModifiedDate:{" "}
+              {selectedFile.lastModifiedDate.toLocaleDateString()}
+            </p>
+          </div>
+        ) : (
+          <p>Select a file to show details</p>
+        )}
+        <div>
+          <button onClick={this.handleSubmission}>Submit</button>
+        </div>
+        <br />
+        <form onSubmit={this.handleSubmit}>
           <div className="contain">
             <div className="column">
               {this.renderInput("fname", "First name", "60px")}
@@ -78,20 +130,27 @@ class Account extends Form {
             </div>
 
             <br />
-            {/* {this.renderSelect("lname", "Last name", this.state.providers)} */}
             <div className="column">
               {this.renderInput("lname", "Last name", "60px")}
               <br />
               {this.renderInput("country_code", "Country Code", "60px")}
               <br />
               {this.renderInput("phone", "Phone", "60px")}
-              <br />
+              {this.state.data.mobile_verified === true ? (
+                <div className="alert alert-success" role="alert">
+                  verified
+                </div>
+              ) : (
+                <div className="alert alert-danger" role="alert">
+                  <button className="btn btn-link">Please verify phone</button>
+                </div>
+              )}
             </div>
           </div>
           <br />
           {this.renderButton("Save")}
-        </div>
-      </form>
+        </form>
+      </div>
     );
   }
 }
