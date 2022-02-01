@@ -5,11 +5,7 @@ This project is a front-end project built with react-js for Bethel which is a bl
 Key functionalities: 
  - Sign up
 - Verify email to sign in 
-- Email verified form
 - Sign in
-- Forgot password - recover email
-- Reset password
-- Change password
 - Update profile
 - Send sms to verify mobile
 - Mobile number verified form
@@ -26,6 +22,12 @@ Key functionalities:
 - View all droplets
 - Status view
 - Support view
+
+![image](https://user-images.githubusercontent.com/63653648/151901824-3114d233-04eb-4960-a4cd-4db2ee579430.png)
+
+![image](https://user-images.githubusercontent.com/63653648/151901914-7ee92efe-bda8-427e-9a17-e6d126f21a70.png)
+![image](https://user-images.githubusercontent.com/63653648/151901989-022e4b32-d0be-41b0-a584-4c6ea4a6ff44.png)
+
 
 
 
