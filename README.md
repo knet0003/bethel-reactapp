@@ -1,3 +1,34 @@
+# Application Concept
+
+This project is a front-end project built with react-js for Bethel which is a blockchain development platform. I was responsible to create a front-end with a modern layout where developers would easily be able to access their projects and deploy them on cloud. The desktop application would be used by users who are interested in deploying their projects on Azure or Google.
+
+Key functionalities: 
+ - Sign up
+- Verify email to sign in 
+- Email verified form
+- Sign in
+- Forgot password - recover email
+- Reset password
+- Change password
+- Update profile
+- Send sms to verify mobile
+- Mobile number verified form
+- Profile picture upload
+- View profile picture
+- Dashboard view
+- Projects view
+- Create project view
+- View project
+- Delete project
+- Create droplet
+- Create multiple droplets
+- View droplet
+- View all droplets
+- Status view
+- Support view
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
