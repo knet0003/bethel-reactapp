@@ -103,6 +103,16 @@ export function getNetworkStatus() {
   return http.get(apiUrl+"api/v1/networkstatus", {headers: headers});
 }
 
+export function sendSMS(number) {
+  const id = localStorage.getItem("id");
+  const body = { mobile: number}
+  return http.post(apiEndpoint+"/users/sendsms/"+id, body, {headers: headers});
+}
+
+export function verifyPhone() {
+
+}
+
 export default {
   login,
   loginWithJwt,
@@ -111,5 +121,6 @@ export default {
   getProfile,
   saveProfile, 
   getProfPicture,
-  submitTicket
+  submitTicket,
+  register
 };

@@ -8,7 +8,7 @@ class ProjectTable extends Component {
       path: "name",
       label: "Name",
       content: (project) => (
-        <Link to={`/projects/${project._id}`}>{project.name}</Link>
+        <Link to={`/projects/${project.project_id}`}>{project.name}</Link>
       ),
     },
     { path: "provider", label: "Provider" },

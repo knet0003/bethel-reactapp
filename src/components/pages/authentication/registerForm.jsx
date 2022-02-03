@@ -6,6 +6,7 @@ import "./loginForm.css";
 import Button from "react-bootstrap/Button";
 import logo from "../../../bethelblock.png";
 import countryList from "react-select-country-list";
+import { Modal } from "react-bootstrap";
 
 class RegisterForm extends Form {
   state = {
@@ -15,10 +16,12 @@ class RegisterForm extends Form {
       confirm_password: "",
       first_name: "",
       last_name: "",
-      phone_number: "",
+      phone: "",
       country: "",
       country_code: "",
     },
+    message: "",
+    isShown: false,
     errors: {},
     phoneNumber: "",
     phoneInput: "",
@@ -30,26 +33,43 @@ class RegisterForm extends Form {
     confirm_password: Joi.string().required().valid(Joi.ref("password")),
     first_name: Joi.string().required().label("First name"),
     last_name: Joi.string().required().label("Last name"),
-    phone_number: Joi.number().required().label("Phone number"),
+    phone: Joi.number().required().label("Phone number"),
     country: Joi.string().required().label("Country"),
     country_code: Joi.number().required().label("Country code"),
   };
 
   doSubmit = async () => {
-    try {
-      const { data } = this.state;
-      const token = await authService.register(this.state.data);
-      this.props.token(token);
-
-      console.log(token);
-    } catch (ex) {
-      if (ex.response && ex.response.status === 400) {
-        const errors = { ...this.state.errors };
-        errors.username = ex.response.data;
-        this.setState({ errors });
-      }
-    }
+    const { data } = this.state;
+    await authService
+      .register(data)
+      .then((response) => {
+        // Handle response
+        console.log(response);
+        const { data } = response;
+        const { response: res } = data;
+        const { message } = res;
+        this.setState({ message: message });
+        this.setState({ isShown: true });
+        // return response;
+      })
+      .catch((error) => {
+        // Error
+        if (error.response) {
+          const { message } = error.response.data;
+          // const { message } = response;
+          this.setState({ message });
+          this.setState({ isShown: true });
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log("Error", error.message);
+        }
+        console.log(error.config);
+      });
   };
+
+  handleClose = async () => this.setState({ isShown: false });
 
   render() {
     const options = countryList().getData();
@@ -59,6 +79,19 @@ class RegisterForm extends Form {
           <div className="logincardContainer">
             <img src={logo} alt="logo" className="logo" />
             <h3>Register</h3>
+            <Modal
+              show={this.state.isShown}
+              onHide={this.handleClose}
+              backdrop="static"
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Message</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {this.state.message}
+                <br />
+              </Modal.Body>
+            </Modal>
             <br />
             {this.renderInput("first_name", "First name")}
             <br />
@@ -78,7 +111,7 @@ class RegisterForm extends Form {
                 {this.renderInput("country_code", "Country code")}
               </div>
               <div className="grid-item">
-                {this.renderInput("phone_number", "Phone number", "phone")}
+                {this.renderInput("phone", "Phone number", "phone")}
               </div>
             </div>
             <br />

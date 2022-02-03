@@ -1,10 +1,11 @@
 import React from "react";
 import "./account.css";
-import profile from "../../../profile.png";
+import profile from "../../../avatar.png";
 import {
   getProfile,
   savePicture,
   saveProfile,
+  sendSMS,
 } from "../../../services/authService";
 import { getProfPicture } from "../../../services/authService";
 import Joi from "joi-browser";
@@ -41,8 +42,8 @@ class Account extends Form {
   async componentDidMount() {
     await this.populateProfile();
     const { data } = await getProfPicture();
-    const { image_stream } = data;
-    this.setState({ profile_picture: image_stream });
+    const { message, image_stream } = data;
+    if (message === "") this.setState({ profile_picture: image_stream });
   }
 
   async populateProfile() {
@@ -83,6 +84,14 @@ class Account extends Form {
     window.location.reload(false);
   };
 
+  sendSMS = async () => {
+    const mobile = this.state.data.phone;
+    const { status } = await sendSMS(mobile);
+    if (status === true) {
+      console.log(status);
+    }
+  };
+
   render() {
     const options = countryList().getData();
     const { selectedFile, isSelected } = this.state;
@@ -90,7 +99,7 @@ class Account extends Form {
     return (
       <div className="cardContainer">
         <h3 className="title"> Profile </h3>
-        {this.state.profile_picture !== "" ? (
+        {this.state.profile_picture ? (
           <img
             src={`data: image/png;base64,${this.state.profile_picture}`}
             alt="avatar"
@@ -142,7 +151,9 @@ class Account extends Form {
                 </div>
               ) : (
                 <div className="alert alert-danger" role="alert">
-                  <button className="btn btn-link">Please verify phone</button>
+                  <button className="btn btn-link" onClick={this.sendSMS}>
+                    Please verify phone
+                  </button>
                 </div>
               )}
             </div>

@@ -70,6 +70,11 @@ class Dashboard extends React.Component {
             <h2>System Log</h2>
             {/* <div>{JSON.stringify(this.state.log)}</div> */}
             <div>Account created: {account_created}</div>
+            <div>Projects created: {projects_created}</div>
+            <div>Projects deleted: {projects_deleted}</div>
+            <div>Droplets created: {droplets_created}</div>
+            <div>Droplets deleted: {droplets_deleted}</div>
+            <div>Droplets deployed: {droplets_deployed}</div>
             <div>{this.showLog}</div>
           </div>
           <div className="dashboardcardContainer">

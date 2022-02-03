@@ -1,7 +1,7 @@
 import React from "react";
 import "./deployment.css";
 import Form from "../../common/form";
-import { getDeployedProjects } from "../../../services/projectService";
+import { getUndeployedProjects } from "../../../services/projectService";
 import { Dropdown, DropdownButton, FloatingLabel } from "react-bootstrap";
 import Joi from "joi-browser";
 
@@ -31,12 +31,15 @@ class Deployment extends Form {
   };
 
   async componentDidMount() {
-    const projResponse = await getDeployedProjects();
+    const projResponse = await getUndeployedProjects();
     const { data: projData } = projResponse;
     const { projects } = projData;
-    const newProj = projects.map((project) => {
-      return { ...project, label: project.name, value: project.name };
-    });
+    const newProj = [];
+    if (Array.isArray(projects) && !projects.length) {
+      newProj = projects.map((project) => {
+        return { ...project, label: project.name, value: project.name };
+      });
+    }
     projects
       ? this.setState({ projects: newProj })
       : this.setState({ projects: [] });

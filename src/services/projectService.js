@@ -1,6 +1,7 @@
 import http from "./httpService";
 import { apiUrl } from "../config.json";
 import axios from "axios";
+import { AxiosResponse, AxiosError } from 'axios';
 import { CloseOutlined } from "@mui/icons-material";
 
 const apiEndpoint = apiUrl + "api/v1/project";
@@ -24,13 +25,16 @@ export function getProjects() {
      }
 
 export function getProject(projectId) {
-  return http.get(projectUrl(projectId));
+
+  const id = localStorage.getItem("id");
+
+  return http.get(apiEndpoint+"/"+projectId+"/"+id, {headers: header2});
 }
 
 export function saveProject(project) {
     const body = { ...project };
     const id = localStorage.getItem("id");
-    return http.post(apiEndpoint+"/"+id, body, {headers: header2});
+    return http.post(apiEndpoint+"/"+id, body, {headers: header2})
 }
 
 export function sendDeleteProject(projectId) {
@@ -43,4 +47,8 @@ export function deleteProject(projectId, otp) {
 
 export function getDeployedProjects() {
   return http.get(apiUrl + `api/v1/deployed/project/${id}`, {headers: headers})
+}
+
+export function getUndeployedProjects() {
+  return http.get(apiUrl + `api/v1/sdkundeployed/project/${id}`, {headers: headers})
 }

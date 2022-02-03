@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./topBar.css";
-import profile from "../../profile.png";
+import profile from "../../avatar.png";
 import logo from "../../bethelblock.png";
 import { Link } from "react-router-dom";
 import authService from "../../services/authService";
@@ -10,8 +10,9 @@ function TopBar() {
   const [name, setName, picture, setPicture] = useState(0);
   setName(authService);
   const { data } = getProfPicture();
-  const { image_stream } = data;
-  setPicture(image_stream);
+  const { message, image_stream } = data;
+  if (message === "") setPicture(image_stream);
+  else setPicture("");
   return (
     <div className="topBar">
       <div className="topBarWrapper">
@@ -28,11 +29,17 @@ function TopBar() {
             <span>John Snow</span>
 
             <Link to="/account">
-              <img
-                src={`data: image/png;base64,${picture}`}
-                alt="avatar"
-                className="avatar"
-              />
+              <img src={profile} alt="avatar" className="topAvatar" />
+
+              {/* {picture ? (
+                <img
+                  src={`data: image/png;base64,${picture}`}
+                  alt="avatar"
+                  className="topAvatar"
+                />
+              ) : (
+                <img src={profile} alt="avatar" className="topAvatar" />
+              )} */}
             </Link>
           </div>
         </div>

@@ -4,6 +4,7 @@ import "../projects/projects.css";
 import Joi from "joi-browser";
 import Form from "../../common/form";
 import { getProjects } from "./../../../services/projectService";
+import { Modal } from "react-bootstrap";
 
 class CreateNode extends Form {
   state = {
@@ -13,6 +14,7 @@ class CreateNode extends Form {
     },
     projects: [],
     errors: {},
+    isShown: false,
   };
   schema = {
     _id: Joi.string(),
@@ -29,11 +31,40 @@ class CreateNode extends Form {
     ids ? this.setState({ projects: ids }) : this.setState({ projects: [] });
     console.log(this.state.projects);
   }
+
   doSubmit = async () => {
-    await saveNode(this.state.data);
+    await saveNode(this.state.data)
+      .then((response) => {
+        // Handle response
+        console.log(response);
+        const { data } = response;
+        const { response: res } = data;
+        const { message } = res;
+        this.setState({ message: message });
+        this.setState({ isShown: true });
+        // return response;
+      })
+      .catch((error) => {
+        // Error
+        if (error.response) {
+          const { response } = error.response.data;
+          const { message } = response;
+          this.setState({ message: message });
+          this.setState({ isShown: true });
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log("Error", error.message);
+        }
+        console.log(error.config);
+      });
+
     console.log("save");
-    this.props.history.push("/projects");
   };
+
+  handleClose = async () => this.setState({ isShown: false });
+
   render() {
     const labels = this.state.projects.map((p) => {
       let labels = { label: p, value: p };
@@ -43,7 +74,19 @@ class CreateNode extends Form {
       <form onSubmit={this.handleSubmit}>
         <div className="cardContainer">
           <h3 className="title"> Create Node </h3>
-
+          <Modal
+            show={this.state.isShown}
+            onHide={this.handleClose}
+            backdrop="static"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Error</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {this.state.message}
+              <br />
+            </Modal.Body>
+          </Modal>
           <br />
           {this.renderSelect("project_id", "Project id", labels)}
           <br />

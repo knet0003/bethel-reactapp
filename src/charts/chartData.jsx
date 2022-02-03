@@ -50,6 +50,7 @@ export default class Example extends PureComponent {
   static demoUrl = "https://codesandbox.io/s/tiny-line-chart-r5z0f";
 
   render() {
+    // const data = this.props.data;
     return (
       <ResponsiveContainer width="100%" aspect={4 / 1}>
         <LineChart width={300} height={100} data={data}>

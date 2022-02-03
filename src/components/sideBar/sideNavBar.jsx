@@ -7,7 +7,7 @@ import CreateNode from "./../pages/projects/createNode";
 import Account from "../pages/account/account";
 import Deployment from "../pages/deployment/deployment";
 import "../topBar/topBar.css";
-import profile from "../../profile.png";
+import profile from "../../avatar.png";
 import logo from "../../bethelblock.png";
 import authService, {
   getProfile,
@@ -34,8 +34,8 @@ class Sidebar extends React.Component {
     this.setState({ name: first_name + " " + last_name });
     console.log(this.state.name);
     const { data: data2 } = await getProfPicture();
-    const { image_stream } = data2;
-    this.setState({ image: image_stream });
+    const { message, image_stream } = data2;
+    if (message === "") this.setState({ image: image_stream });
   }
 
   render() {
@@ -58,11 +58,15 @@ class Sidebar extends React.Component {
               <p>{this.state.name}</p>
               <div className="topBarIconContainer">
                 <Link to="/account">
-                  <img
-                    src={`data: image/png;base64,${this.state.image}`}
-                    alt="avatar"
-                    className="topAvatar"
-                  />
+                  {this.state.image ? (
+                    <img
+                      src={`data: image/png;base64,${this.state.image}`}
+                      alt="avatar"
+                      className="topAvatar"
+                    />
+                  ) : (
+                    <img src={profile} alt="avatar" className="topAvatar" />
+                  )}
                 </Link>
               </div>
             </div>
@@ -105,6 +109,7 @@ class Sidebar extends React.Component {
               {routes.map((route, index) => (
                 <Route key={index} path={route.path} element={<route.main />} />
               ))}
+              {/* <Route path="/projects/:id" element={ViewProject} /> */}
               <Route path="/projects/:id" element={<CreateProject />} />
               <Route path="/nodes/:id" element={<CreateNode />} />
               <Route path="/account" element={<Account />} />
